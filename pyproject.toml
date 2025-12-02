@@ -1,0 +1,26 @@
+[project]
+name = "treemovcrmbackend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aerich>=0.9.2",
+    "asyncpg>=0.30.0",
+    "bcrypt>=5.0.0",
+    "email-validator>=2.3.0",
+    "fastapi>=0.121.3",
+    "fastapi-admin>=1.0.4",
+    "httpx>=0.28.1",
+    "passlib[bcrypt]>=1.7.4",
+    "python-jose[cryptography]>=3.5.0",
+    "setuptools>=80.9.0",
+    "tortoise-orm>=0.25.1",
+    "uvicorn>=0.38.0",
+]
+
+
+[tool.aerich]
+tortoise_orm = "app.core.db.TORTOISE_ORM"
+location = "./migrations"
+src_folder = "."
