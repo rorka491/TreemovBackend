@@ -10,3 +10,43 @@ wheels/
 .venv
 
 .env
+
+# Python virtual environments
+.venv/
+venv/
+env/
+envs/
+ENV/
+*.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest / coverage
+htmlcov/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+
+# pipenv / poetry
+Pipfile.lock
+poetry.lock
+
+# VSCode
+.vscode/
+
+# Mac
+.DS_Store
+
+# Logs
+*.log
+
