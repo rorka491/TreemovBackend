@@ -3,9 +3,8 @@ from tortoise.contrib.fastapi import register_tortoise
 from app.core.db import TORTOISE_ORM
 from app.middleware import TenantMiddleware
 from app.api.routers import router
-from app.lifespan import lifespan
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 app.include_router(router)
 app.add_middleware(TenantMiddleware)

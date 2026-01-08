@@ -1,18 +1,8 @@
 services:
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    ports:
-      - "5672:5672" 
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    restart: unless-stopped
-  crm core:
-    build: .
+  crm_core:
+    build:
+      context: ../../
+      dockerfile: services/crm_core/Dockerfile
     container_name: crm
     restart: always
     env_file: .env
@@ -21,14 +11,28 @@ services:
     environment:
       DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}"
       PUBLIC_KEY_PATH: /app/keys/public.pem
-      PRIVATE_KEY_PATH: /app/keys/private.pem
     depends_on:
       - db
-      - redis
+    networks:
+      - app-network
+  db:
+    image: postgres:16
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     networks:
       - app-network
 
 
+networks:
+  app-network:
+    driver: bridge
+
+
 volumes:
-  rabbitmq_data:
+  pgdata:
 
