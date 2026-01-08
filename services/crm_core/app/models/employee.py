@@ -27,10 +27,14 @@ class Employee(BaseModelTenant):
 
 
 class Teacher(BaseModelTenant):
-    employee: fields.OneToOneRelation[Employee] = fields.OneToOneField(
-        "models.Employee", related_name="teacher"
+    name = fields.CharField(max_length=100)
+    surname = fields.CharField(max_length=100)
+    patronymic = fields.CharField(max_length=100, null=True)
+    department: fields.ForeignKeyNullableRelation[Department] = fields.ForeignKeyField(
+        "models.Department", related_name="employees", null=True
     )
-
+    email = fields.CharField(max_length=255, null=True)
+    
     class Meta:
         table = "teacher"
 

@@ -1,5 +1,4 @@
 from tortoise import models, fields
-from passlib.context import CryptContext
 from app.models.base import BaseModelPK, BaseModelTenant
 from app.constants import UserRole
 
