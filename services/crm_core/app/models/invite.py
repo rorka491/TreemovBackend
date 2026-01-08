@@ -12,7 +12,7 @@ class Invite(BaseModelTenant):
     )
 
     class Meta:
-        table = "student_invites"
+        table = "invites"
 
 # class InviteTeacher(BaseModelTenant):
 #     status = fields.CharField(max_lenght=50)
