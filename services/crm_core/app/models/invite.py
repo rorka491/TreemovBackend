@@ -4,9 +4,8 @@ from tortoise import fields
 
 class Invite(BaseModelTenant):
     status = fields.CharField(max_lenght=50)
-    email = fields.CharField(max_lenght=100)
 
-    student_profile = fields.ForeignKeyField(
+    profile = fields.ForeignKeyField(
         "models.Profile",
         related_name="invites"
     )
