@@ -23,5 +23,4 @@ COPY services/crm_core ./services/crm_core
 WORKDIR /app/services/crm_core
 
 
-
-CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["sh", "-c", "aerich upgrade && uv run uvicorn main:app --host 0.0.0.0 --port 8001"]
