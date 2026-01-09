@@ -6,19 +6,7 @@ from app.models.base import BaseModelPK
 from app.decorators import handle_relations
 from app.repositories.base import AbstractRepository, M
 
-from app.models.employee import Employee, Teacher, Department
-from app.models.lessons import Lesson, Subject, Classroom, PeriodLesson
-from app.models.organization import Organization, OrganizationMember
-from app.models.students import Student, StudentGroupMember
-from app.models.group import StudentGroup
-from app.models.grade import Grade
-from app.models.invite import Invite
-from app.models.permission import Permission, RolePermission
-from app.models.role import Role, ProfileRole
-from app.models.score_transaction import Accrual
-from app.models.attendance import Attendance
-from app.models.profile import Profile
-
+from app.models import *
 
 
 
@@ -185,14 +173,11 @@ class PermissionRepository(TortoiseRepository):
 class RolePermissionRepository(TortoiseRepository):
     model = RolePermission
 
-class ProfileRepository(TenantRepository):
+class ProfileRepository(TortoiseRepository):
     model = Profile
 
 class RoleRepository(TortoiseRepository):
     model = Role
-
-class ProfileRoleRepository(TortoiseRepository):
-    model = ProfileRole
 
 class AccrualRepository(TenantRepository):
     model = Accrual

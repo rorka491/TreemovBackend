@@ -21,4 +21,5 @@ class RolePermission(BaseModelPK):
     )
 
     class Meta:
+        table = 'role_permissions'
         unique_together = ('role', 'permission')
