@@ -22,7 +22,7 @@ class StudentGroupMember(BaseModelTenant):
         related_name="group_memberships"
     )
     group = fields.ForeignKeyField(
-        "models.Group",
+        "models.StudentGroup",
         related_name="members" 
     )
 

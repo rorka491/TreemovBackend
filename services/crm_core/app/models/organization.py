@@ -13,7 +13,7 @@ class OrganizationMember(BaseModelTenant):
         related_name="organization_members"
     )
     role = fields.ForeignKeyField(
-        "models.Roles",
+        "models.Role",
         related_name="mebmer_role"
     )
 
