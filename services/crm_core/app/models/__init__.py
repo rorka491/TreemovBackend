@@ -1,7 +1,7 @@
 from app.models.employee import Employee, Teacher, Department
 from app.models.lessons import Lesson, Subject, Classroom, PeriodLesson
-from app.models.organization import Organization
-from app.models.students import Student
+from app.models.organization import Organization, OrganizationMember
+from app.models.students import Student, StudentGroupMember
 from app.models.group import StudentGroup
 from app.models.grade import Grade
 from app.models.invite import Invite
