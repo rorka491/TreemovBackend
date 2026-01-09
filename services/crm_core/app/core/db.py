@@ -1,7 +1,7 @@
-from app.core.config import DB_NAME, DB_PASSWORD, DB_USER
+from app.core.config import DB_NAME, DB_PASSWORD, DB_USER, DB_HOST
 
 TORTOISE_ORM = {
-    "connections": {"default": f"postgres://{DB_USER}:{DB_PASSWORD}@localhost:5432/{DB_NAME}"},
+    "connections": {"default": f"postgres://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/{DB_NAME}"},
     "apps": {
         "models": {
             "models": [

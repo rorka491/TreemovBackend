@@ -9,7 +9,7 @@ services:
     ports: 
       - "8001:8001"
     environment:
-      DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}"
+      DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}"
       PUBLIC_KEY_PATH: /app/keys/public.pem
     depends_on:
       - db
