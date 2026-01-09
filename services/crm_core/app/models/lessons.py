@@ -19,26 +19,54 @@ class Classroom(BaseModelTenant):
 
 class Subject(BaseModelTenant):
     title = fields.CharField(max_length=100)
+    color = fields.CharField(max_length=7)
 
 
-class Lesson(BaseModelTenant):
+class AbstractLesson(BaseModelTenant):
     title = fields.CharField(max_length=200)
-    start_time = fields.TimeField(null=True)
-    end_time = fields.TimeField(null=True)
-
+    start_time = fields.TimeField(
+        null=True,
+        description="Please use the following format: <em>YYYY-MM-DD</em>.",
+    )
+    end_time = fields.TimeField(
+        null=True,
+        description="Please use the following format: <em>YYYY-MM-DD</em>.",
+    )
     teacher = fields.ForeignKeyField(
-        "models.Teacher", related_name="lessons", null=True
+        'models.Teacher',
+        on_delete=fields.CASCADE,
+        null=True
     )
     classroom = fields.ForeignKeyField(
-        "models.Classroom", related_name="lessons", null=True
+        'models.Classroom',
+        on_delete=fields.SET_NULL,
+        null=True
     )
     student_group = fields.ForeignKeyField(
-        "models.StudentGroup", related_name="lessons", null=True
+        'models.StudentGroup',
+        on_delete=fields.CASCADE,
+        null=True
     )
     subject = fields.ForeignKeyField(
-        "models.Subject", related_name="lessons", null=True
+        'models.Subject',
+        on_delete=fields.CASCADE,
+        null=True
     )
 
+    class Meta:
+        abstract = True
+        
+
+class PeriodLesson(AbstractLesson):
+    period = fields.SmallIntField(null=True)
+    repeat_lessons_until_date = fields.DateField(null=True)
+    start_date = fields.DateField(null=True)
+
+    class Meta:
+        table = "period_lesson"
+
+
+class Lesson(AbstractLesson):
     date = fields.DateField()
     week_day = fields.IntField()
     is_canceled = fields.BooleanField(default=False)
@@ -68,52 +96,3 @@ class Lesson(BaseModelTenant):
     async def save(self):
         self._set_week_day()
         self._set_time_duration()
-
-class PeriodLesson(Lesson):
-    period = fields.SmallIntField(null=True)
-    repeat_lessons_until_date = fields.DateField(null=True)
-    start_date = fields.DateField(null=True)
-
-    class Meta:
-        table = "period_lessons"
-
-
-class AbstractLesson(BaseModelTenant):
-    title = fields.CharField(max_length=200)
-    start_time = fields.TimeField(
-        null=True,
-        description="Please use the following format: <em>YYYY-MM-DD</em>.",
-    )
-    end_time = fields.TimeField(
-        null=True,
-        description="Please use the following format: <em>YYYY-MM-DD</em>.",
-    )
-    teacher = fields.ForeignKeyField(
-        'models.Teacher',
-        on_delete=fields.CASCADE,
-        related_name='%(class)s_teacher',
-        null=True
-    )
-    classroom = fields.ForeignKeyField(
-        'models.Classroom',
-        on_delete=fields.SET_NULL,
-        related_name='%(class)s_group',
-        null=True
-    )
-    group = fields.ForeignKeyField(
-        'models.StudentGroup',
-        on_delete=fields.CASCADE,
-        related_name='%(class)s_classroom',
-        null=True
-    )
-    subject = fields.ForeignKeyField(
-        'models.Subject',
-        on_delete=fields.CASCADE,
-        related_name='%(class)s_subject',
-        null=True
-    )
-
-    class Meta:
-        abstract = True
-
-

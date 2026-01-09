@@ -13,11 +13,11 @@ class Permission(BaseModelPK):
 class RolePermission(BaseModelPK):
     permission = fields.ForeignKeyField(
         "models.Permission",
-        related_name="permissions"
+        related_name="role_permissions"
     )
     role = fields.ForeignKeyField(
         "models.Role",
-        related_name="roles"
+        related_name="role_permissions"
     )
 
     class Meta:

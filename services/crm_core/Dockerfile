@@ -10,17 +10,15 @@ RUN pip install uv
 
 
 COPY pyproject.toml uv.lock ./
-COPY shared/pyproject.toml ./shared/
+COPY shared ./shared
 COPY services/crm_core/pyproject.toml ./services/crm_core/
 
 RUN uv sync --frozen --no-install-project
 
 RUN mkdir -p /app/keys
 
-COPY shared ./shared
 COPY services/crm_core ./services/crm_core
 
-RUN uv sync --frozen
 
 WORKDIR /app/services/crm_core
 

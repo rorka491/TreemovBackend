@@ -9,7 +9,7 @@ class Grade(BaseModelTenant):
     grade_date = fields.DateField(null=True)
 
     lesson = fields.ForeignKeyField(
-        "models.Lessons",
+        "models.Lesson",
         related_name="grades"
     )
     student = fields.ForeignKeyField(

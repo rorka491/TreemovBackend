@@ -7,19 +7,19 @@ class Attendance(BaseModelTenant):
     was_present = fields.BooleanField(default=False)
 
     lesson = fields.ForeignKeyField(
-        "models.Lessons",
-        related_name="attendances"
+        "models.Lesson",
     )
     student = fields.ForeignKeyField(
         "models.Student",
-        related_name="attendances"
     )
 
     comment = fields.TextField(null=True)
 
     class Meta:
         table = 'attendances'
-    
+
+
+
 
 
     

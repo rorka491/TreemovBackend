@@ -1,5 +1,4 @@
-from app.services.auth import AuthService
-from app.repositories.user import UserRepository
+from app.core.config import auth_service
 
 async def get_auth_service():
-    return AuthService(UserRepository())
+    return auth_service

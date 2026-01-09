@@ -6,11 +6,11 @@ from enum import Enum
 
 
 class AccuralCategory(Enum):
-    ATTENDANCE = "attendance", "Посещаемость"
-    PARTICIPATION = "participation", "Участие"
-    BEHAVIOR = "behavior", "Поведение"
-    ACHIEVEMENTS = "achievements", "Достижения"
-    HOMEWORK = "homework", "Домашнее задание"
+    ATTENDANCE = "attendance"
+    PARTICIPATION = "participation"
+    BEHAVIOR = "behavior"
+    ACHIEVEMENTS = "achievements"
+    HOMEWORK = "homework"
 
 
 class Accrual(BaseModelTenant):
@@ -19,12 +19,12 @@ class Accrual(BaseModelTenant):
 
     teacher = fields.ForeignKeyField(
         "models.Profile",
-        related_name="transactions"  
+        related_name="accruals"  
     )
 
     student = fields.ForeignKeyField(
         "models.Student",
-        related_name="transactions"  
+        related_name="accruals"  
     )
     category = fields.CharEnumField(
         AccuralCategory,
@@ -32,4 +32,4 @@ class Accrual(BaseModelTenant):
     )
 
     class Meta:
-        table = "transactions"
+        table = "accruals"

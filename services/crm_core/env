@@ -1,3 +1,4 @@
 DB_NAME = crm_db
 DB_USER = postgres
 DB_PASSWORD = postgres
+ALGORITHM = RS256

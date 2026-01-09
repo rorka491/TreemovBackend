@@ -10,7 +10,7 @@ RUN pip install uv
 
 
 COPY pyproject.toml uv.lock ./
-COPY shared/pyproject.toml ./shared/
+COPY shared ./shared
 COPY services/auth-service/pyproject.toml ./services/auth-service/
 
 RUN uv sync --frozen --no-install-project
@@ -20,7 +20,6 @@ RUN mkdir -p /app/keys && \
     openssl rsa -in /app/keys/private.pem -pubout -out /app/keys/public.pem
 
     
-COPY shared ./shared
 COPY services/auth-service ./services/auth-service
 
 RUN uv sync --frozen

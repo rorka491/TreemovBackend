@@ -4,12 +4,10 @@ from app.models.base import BaseModelPK, BaseModelTenant
 
 class Organization(BaseModelPK):
     title = fields.CharField(max_length=255, unique=True)
-<<<<<<< HEAD
-=======
 
 
 class OrganizationMember(BaseModelTenant):
-    organization_member = fields.ForeignKeyField(
+    user_profile = fields.ForeignKeyField(
         "models.Profile",
         null=True,
         related_name="organization_members"
@@ -35,4 +33,3 @@ class OrganizationMember(BaseModelTenant):
 #         null=True,
 #         related_name="manager_organization_members"
 #     )
->>>>>>> dima

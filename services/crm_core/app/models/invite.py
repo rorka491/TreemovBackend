@@ -3,7 +3,7 @@ from tortoise import fields
 
 
 class Invite(BaseModelTenant):
-    status = fields.CharField(max_lenght=50)
+    status = fields.CharField(max_length=50)
 
     profile = fields.ForeignKeyField(
         "models.Profile",

@@ -4,8 +4,11 @@ from app.models.base import BaseModelTenant
 
 class Profile(BaseModelTenant):
     user_id = fields.IntField(uniquenique=True, null=False)
-    email = fields.CharField(max_length=100)
     is_system_admin = fields.BooleanField(deafult=False)
+    name = fields.CharField(max_length=255)
+    surname = fields.CharField(max_length=255)
+    pathronamic = fields.CharField(max_length=255)
+    
 
 
 # class ManagerProfile(BaseModelTenant):

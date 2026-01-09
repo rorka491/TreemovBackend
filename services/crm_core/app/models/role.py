@@ -14,11 +14,11 @@ class Role(BaseModelPK):
 class ProfileRole(BaseModelPK):
     role = fields.ForeignKeyField(
         "models.Role",
-        related_name="roles"
+        related_name="profile_roles"
     )
     profile = fields.ForeignKeyField(
         "models.Profile",
-        related_name="profiles"
+        related_name="profile_roles"
     )
 
     class Meta:
