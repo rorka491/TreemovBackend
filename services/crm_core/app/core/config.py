@@ -5,7 +5,7 @@ from passlib.context import CryptContext
 from pathlib import Path
 from libs.auth import AuthService
 
-
+BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
