@@ -141,65 +141,65 @@ class TenantRepository(TortoiseRepository):
 
 
 class EmployeeRepository(TenantRepository):
-    model: Employee
+    model = Employee
 
 class TeacherRepository(TenantRepository):
-    model: Teacher
+    model = Teacher
 
 class DepartamentRepository(TenantRepository):
-    model: Department
+    model = Department
 
 class AttendanceRepository(TenantRepository):
-    model: Attendance
+    model = Attendance
 
 class GradeRepository(TenantRepository):
-    model: Grade
+    model = Grade
 
 class StudentGroupRepository(TenantRepository):
-    model: StudentGroup
+    model = StudentGroup
 
 class InviteRepository(TenantRepository):
-    model: Invite
+    model = Invite
 
 class ClassroomRepository(TenantRepository):
-    model: Classroom
+    model = Classroom
 
 class SubjectRepository(TenantRepository):
-    model: Subject
+    model = Subject
 
 class PeriodLessonRepository(TenantRepository):
-    model: PeriodLesson
+    model = PeriodLesson
 
 class LessonRepository(TenantRepository):
-    model: Lesson
+    model = Lesson
 
 class OrganizationMemberRepository(TenantRepository):
-    model: OrganizationMember
+    model = OrganizationMember
 
 class OrganizationRepository(TortoiseRepository):
-    model: Organization
+    model = Organization
 
 class PermissionRepository(TortoiseRepository):
-    model: Permission
+    model = Permission
 
 class RolePermissionRepository(TortoiseRepository):
-    model: RolePermission
+    model = RolePermission
 
 class ProfileRepository(TenantRepository):
-    model: Profile
+    model = Profile
 
 class RoleRepository(TortoiseRepository):
-    model: Role
+    model = Role
 
 class ProfileRoleRepository(TortoiseRepository):
-    model: ProfileRole
+    model = ProfileRole
 
 class AccrualRepository(TenantRepository):
-    model: Accrual
+    model = Accrual
 
 class StudentRepository(TenantRepository):
-    model: Student
+    model = Student
 
 class StudentGroupMemberRepository(TenantRepository):
-    model: StudentGroupMember
+    model = StudentGroupMember
 
