@@ -1,50 +1,37 @@
+from typing import TypeVar, Optional, List, Type
+from tortoise import Model
+from tortoise.queryset import QuerySet, QuerySetSingle
 from abc import ABC, abstractmethod
 from app.models.base import BaseModelPK
+from app.decorators import handle_relations
+
+M = TypeVar('M', bound=Model)
+
 
 class AbstractRepository(ABC):
+    model: Type[M]
 
     @abstractmethod
-    async def add():
-        raise NotImplementedError
-                      
-    @abstractmethod    
-    async def get_all():
-        raise NotImplementedError
-    
-    @abstractmethod    
-    async def get_by():
-        raise NotImplementedError
+    async def get(self, **filters) -> Optional[M]:
+        ...
 
+    @abstractmethod
+    def get_all(self) -> List[M]:
+        ...
 
-class TortoiseRepository(AbstractRepository):
-    model: BaseModelPK = None
+    @abstractmethod
+    async def filter(self, **filters) -> List[M]:
+        ...
 
+    @abstractmethod
+    async def create(self, **data) -> M:
+        ...
 
-    async def add(self, **kwargs):
-        return await self.model.create(**kwargs)
-    
-    async def get_by(self, **filter_by):
-        return await self.model.get_or_none(**filter_by)
+    @abstractmethod
+    async def extract_relation_fields(self, **data) -> dict[str: int]:
+        ...
 
-    async def get_all(self, **filter_by):
-        qs = self.model.filter(**filter_by) if filter_by else self.model.all()
-        return await qs
+    @abstractmethod
+    async def update(self, obj: M, **data) -> M:
+        ...
 
-
-class TenantRepository(TortoiseRepository):
-    org: str | int = None
-
-    def __init__(self, org):
-        self.org_ = org
-
-    async def add(self, **kwargs):
-        kwargs["org_id"] = self.org
-        return await self.model.create(**kwargs)
-
-    async def get_by(self, **filter_by):
-        filter_by["org_id"] = self.org
-        return await super().get_by(**filter_by)
-
-    async def get_all(self, **filter_by):
-        filter_by["org_id"] = self.org
-        return await super().get_all(**filter_by)
