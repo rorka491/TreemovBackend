@@ -1,5 +1,5 @@
 from app.models.base import BaseModelPK
-from tortoise import fields
+from tortoise import fields, models
 
 
 class Permission(BaseModelPK):

@@ -19,5 +19,3 @@ class OrganizationMember(BaseModelTenant):
 
     class Meta:
         table = 'organization_member'
-
-        
