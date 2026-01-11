@@ -6,7 +6,11 @@ from app.models.base import BaseModelPK
 from app.decorators import handle_relations
 from app.repositories.base import AbstractRepository, M
 
+<<<<<<< HEAD
 
+=======
+from app.models import *
+>>>>>>> 31d6309f9dc7471a27be91ecd2a086b15c322ca1
 
 from app.models import *
 
@@ -175,14 +179,11 @@ class PermissionRepository(TortoiseRepository):
 class RolePermissionRepository(TortoiseRepository):
     model = RolePermission
 
-class ProfileRepository(TenantRepository):
+class ProfileRepository(TortoiseRepository):
     model = Profile
 
 class RoleRepository(TortoiseRepository):
     model = Role
-
-class ProfileRoleRepository(TortoiseRepository):
-    model = ProfileRole
 
 class AccrualRepository(TenantRepository):
     model = Accrual

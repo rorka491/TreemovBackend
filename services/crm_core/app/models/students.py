@@ -9,6 +9,11 @@ class Student(BaseModelTenant):
     progress = fields.DecimalField(max_digits=5, decimal_places=2, default=0)
     birthday = fields.DateField()
     score = fields.IntField(default=0)
+    org_member = fields.ForeignKeyField(
+        "models.OrganizationMember",
+        related_name='student'
+    )
+
     class Meta: 
         table = 'students'
 

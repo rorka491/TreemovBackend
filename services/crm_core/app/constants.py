@@ -1,4 +1,5 @@
 from enum import Enum
+from app.commands import seed
 
 class BaseEnum(Enum):
 
@@ -15,5 +16,7 @@ class UserRole(BaseEnum):
     ADMIN = 'Admin'
     MANAGER = 'Manager'
     TEACHER = 'Teacher'
+
+commands = {"seed": seed}
 
 

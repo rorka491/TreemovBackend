@@ -6,7 +6,7 @@ from app.models.group import StudentGroup
 from app.models.grade import Grade
 from app.models.invite import Invite
 from app.models.permission import Permission, RolePermission
-from app.models.role import Role, ProfileRole
+from app.models.role import Role
 from app.models.score_transaction import Accrual
 from app.models.attendance import Attendance
 from app.models.profile import Profile

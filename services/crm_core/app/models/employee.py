@@ -14,10 +14,16 @@ class Employee(BaseModelTenant):
     name = fields.CharField(max_length=100)
     surname = fields.CharField(max_length=100)
     patronymic = fields.CharField(max_length=100, null=True)
-    department: fields.ForeignKeyNullableRelation[Department] = fields.ForeignKeyField(
-        "models.Department", related_name="employees", null=True
+    department = fields.ForeignKeyField(
+        "models.Department", 
+        related_name="employees", 
+        null=True
     )
     email = fields.CharField(max_length=255, null=True)
+    org_member = fields.ForeignKeyField(
+        "models.OrganizationMember",
+        related_name='employee'
+    )
 
     class Meta:
         table = "employee"
@@ -27,11 +33,11 @@ class Employee(BaseModelTenant):
 
 
 class Teacher(BaseModelTenant):
-    name = fields.CharField(max_length=100)
-    surname = fields.CharField(max_length=100)
-    patronymic = fields.CharField(max_length=100, null=True)
-    email = fields.CharField(max_length=255, null=True)
-    
+    employee = fields.ForeignKeyField(
+        "models.Employee",
+        related_name="teacher",
+    )
+
     class Meta:
         table = "teacher"
 
