@@ -3,14 +3,15 @@ from src.services.token import create_access_token, create_refresh_token, verify
 from shared.schemas.user import UserLogin
 from src.models.user import User
 from src.core.logger import logger
-from src.core.config import hasher, redis_client, argon2
+from src.core.config import hasher, redis_client, argon2, ALGORITHM, PUBLIC_KEY
 from shared.exceptions.auth import InvalidUserCredentials, InvalidTokenException, TokenBlackListedException, JtiNotProvided
-
+from libs.auth import TokenService
 
 class AuthService:
     def __init__(self):
         self.hasher: argon2 = hasher
         self.repo = UserRepository()
+        self.token_service = TokenService(public_key=PUBLIC_KEY, alghoritms=[ALGORITHM])
 
     async def authenticate_user(self, data: UserLogin) -> tuple[str, str]:
         user = await self.repo.get_user_by_email(email=data.email)
@@ -27,14 +28,14 @@ class AuthService:
         return access_token, refresh_token
 
     async def get_new_access_token(self, refresh_token: str) -> str | None :
-        payload = verify_refresh_token(refresh_token)
+        payload = self.token_service.verify_refresh_token(refresh_token)
         await self.get_jti_or_exception(payload)
         user = await self.get_user_or_exception(payload)
         access_token = create_access_token(user)
         return access_token 
 
     async def get_user_data(self, access_token: str) -> User: 
-        payload = verify_refresh_token(access_token)
+        payload = self.token_service.verify_refresh_token(access_token)
         return await self.get_user_or_exception(payload)
 
     async def get_user_or_exception(self, payload: dict) -> User:

@@ -24,8 +24,8 @@ def create_token(
         "sub": str(user.id),
         "type": token_type,
         "exp": expire,
-        "org_id": user.org_id,
-        "role": user.role.value
+        "role": user.role.value,
+        "is_active": user.is_active
     }
 
     return jwt.encode(payload, PRIVATE_KEY, algorithm=ALGORITHM) # pyright: ignore[reportArgumentType]

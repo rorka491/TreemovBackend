@@ -4,7 +4,9 @@ from src.services.user import UserService
 from src.services.auth import AuthService
 from src.core.logger import logger
 from shared.schemas.user import UserCreate, UserRead, UserLogin
+from shared.schemas.profile import ProfileCreate
 from shared.schemas.token import TokenResponse, RefreshTokenRequest
+from shared.schemas.register import RegisterRequest
 
 router = APIRouter(prefix='/auth', tags=["Auth"])
 
@@ -12,10 +14,10 @@ router = APIRouter(prefix='/auth', tags=["Auth"])
 @router.post('/register', response_model=UserRead)
 async def register(
     request: Request, 
-    data: UserCreate, 
+    data: RegisterRequest, 
     user_service: UserService = Depends(get_user_service)
 ):
-    user = await user_service.create_user(data)
+    user = await user_service.handle_user_create(profile_data=data.profile, user_data=data.user)
     return user
 
 

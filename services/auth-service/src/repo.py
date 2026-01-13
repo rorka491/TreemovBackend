@@ -3,6 +3,7 @@ from tortoise.models import Model
 from tortoise.expressions import Q
 from typing import Type, Optional, List, TypeVar
 from src.models.user import User
+from src.core.config import hasher
 
 
 M = TypeVar('M', bound=Model)
@@ -52,10 +53,21 @@ class TortoiseRepository(AbstractRepository):
 class UserRepository(TortoiseRepository):
     model = User
 
-    async def user_credentials_exists(self, username: str, email: str) -> bool:
-        if not email:
-            return await self.model.filter(username=username).exists()
-        return await self.model.filter(Q(email=email) | Q(username=username)).exists()
+    async def create(self, **data):
+        password = data.get("password")
+        data['password'] = hasher.hash(password)
+        return await super().create(**data)
+    
+    async def update(self, **data):
+        password = data.get("password")
+        data['password'] = hasher.hash(password)
+        return await super().update(**data)
+
+    async def update_password(self, password: str):
+        return await self.update(password=password)
+
+    async def active_user_exists(self, email: str) -> bool:
+        return await self.model.filter(Q(email=email) & Q(is_active=True)).exists()
     
     async def get_user_by_username(self, username: str) -> User | None:
         return await self.model.get_or_none(username=username)

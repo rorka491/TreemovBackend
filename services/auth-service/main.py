@@ -4,13 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.api.router import router
 from src.core.db import TORTOISE_ORM
 from src.core.lifespan import lifespan
-from src.core.logger import logger
 
 
-def get_app() -> FastAPI:
-    app = FastAPI()
-    app.include_router(router)
-    return app
 
 app = FastAPI(lifespan=lifespan)
 
