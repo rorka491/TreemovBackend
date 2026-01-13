@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 RABBITMQ_USER = os.getenv("RABBITMQ_USER")

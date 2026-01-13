@@ -8,15 +8,14 @@ ENV UV_PROJECT_ENVIRONMENT=/usr/local
 WORKDIR /app
 
 COPY pyproject.toml uv.lock ./
-COPY shared/pyproject.toml ./shared/
+COPY shared ./shared
 COPY services/rabbitmq/pyproject.toml ./services/rabbitmq/
 
 RUN uv sync --frozen --no-install-project
 
-COPY shared ./shared
+
 COPY services/rabbitmq ./services/rabbitmq
 
-RUN uv sync --frozen
 
 WORKDIR /app/services/rabbitmq
 

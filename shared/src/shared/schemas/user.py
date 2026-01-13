@@ -1,13 +1,16 @@
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
-from typing import Optional
-from shared.schemas.user import UserRole
+from typing import Optional, Literal
+from shared.enums.auth import UserRole
 
 class UserCreate(BaseModel):
     username: str
     email: Optional[EmailStr] = None
     password: str = Field(min_length=6)
-    org_id: Optional[int] = None
+    role: UserRole = UserRole.USER
+    
 
+class AdminCreate(UserCreate):
+    role: UserRole = UserRole.ADMIN
 
 class UserRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -15,8 +18,8 @@ class UserRead(BaseModel):
     id: int
     username: str
     email: Optional[str] = None
-    org_id: Optional[int]
-    role: UserRole = UserRole.USER
+    is_active: bool
+    role: Literal["admin", "user"]
 
 
 class UserInDB(UserRead):

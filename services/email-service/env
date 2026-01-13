@@ -1,0 +1,4 @@
+DB_PASSWORD = rodion
+DB_USER = 1234
+DB_NAME = email_db
+HOST_ADRESS = localhost:5432

@@ -18,19 +18,21 @@ class EventPayloadMapper:
     _mapping = QUEUE_PAYLOAD_MAPPING
 
     @classmethod
-    def get_payload_cls(cls, queue_type: QueueEnum) -> type[BaseModel] | None:
-        return cls._mapping.get(queue_type)
+    def get_payload_cls(cls, queue: QueueEnum) -> type[BaseModel] | None:
+        return cls._mapping.get(queue)
 
     @classmethod
-    def build_payload(cls, queue_type: QueueEnum, payload_obj: BaseModel) -> dict | None:
-        payload_cls = cls.get_payload_cls(queue_type)
-        if not payload_cls:
-            return None
-
+    def get_payload_dict(cls, payload_cls: type[BaseModel], payload_obj: BaseModel) -> dict:
         return payload_obj.model_dump(
             include=payload_cls.model_fields.keys()
         )
 
-
+    @classmethod
+    def build_payload(cls, queue: QueueEnum, payload_obj: BaseModel) -> BaseModel:
+        payload_cls = cls.get_payload_cls(queue)
+        if not payload_cls:
+            return None
+        payload_dict = cls.get_payload_dict(payload_cls=payload_cls, payload_obj=payload_obj)
+        return payload_cls(**payload_dict)
 
 

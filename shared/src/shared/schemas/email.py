@@ -6,22 +6,19 @@ from contracts.base import QueueEnum
 
 class SendCodeSchema(BaseModel):
     email: EmailStr
-    purpose: QueueEnum
 
 class VerifyCodeSchema(BaseModel):
     email: EmailStr
     code: str
-    purpose: QueueEnum
+
 
 class CodeOutSchema(BaseModel):
     email: EmailStr
     code: str
-    purpose: QueueEnum
     expires_at: datetime
 
 
 class EmailEvent(BaseModel):
-    event: QueueEnum
     payload: VerifyCodeSchema
     occurred_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 

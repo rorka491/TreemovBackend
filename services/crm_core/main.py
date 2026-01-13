@@ -4,7 +4,6 @@ from tortoise.contrib.fastapi import register_tortoise
 from app.core.db import TORTOISE_ORM
 # from app.middleware import TenantMiddleware
 from app.api.routers import router
-from app.core.config import logger
 from app.consume.tasks import user_created_consumer_task
 
 
@@ -21,5 +20,5 @@ register_tortoise(
 
 @app.on_event("startup")
 async def startup():
-    logger.warning("start user_created_consumer_task")
     asyncio.create_task(user_created_consumer_task())
+

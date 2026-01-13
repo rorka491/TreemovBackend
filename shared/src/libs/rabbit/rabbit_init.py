@@ -5,26 +5,20 @@ from shared.enums.queue import QueueEnum
 
 
 RABBIT_URL = "amqp://guest:guest@localhost/"
-
-EXCHANGE_NAME = "events"
-
+EXCHANGE_NAME = "amq.direct"
 QUEUES = list(QueueEnum)
+
 
 async def init_rabbit(
     url: str, 
     queues: list, 
-    exchange: str = "events"
+    exchange_name: str = EXCHANGE_NAME
 ):
     connection = await aio_pika.connect_robust(url)
     async with connection:
         channel = await connection.channel()
 
-        exchange = await channel.declare_exchange(
-            EXCHANGE_NAME,
-            ExchangeType.FANOUT,
-            durable=True
-        )
-
+        exchange = await channel.get_exchange(exchange_name)
         for queue_name in queues:
             queue = await channel.declare_queue(
                 queue_name,

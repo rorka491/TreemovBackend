@@ -9,7 +9,8 @@ dependencies = [
     "pydantic[email]",
     "kafka-python",
     "aio-pika>=9.4",
-    "jose"
+    "jose",
+    "faststream"
 ]
 
 [tool.setuptools]

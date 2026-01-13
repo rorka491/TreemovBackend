@@ -1,10 +1,10 @@
 from typing import Optional
-from shared.exceptions.auth import InvalidTokenException, InvalidUserCredentials, PublicKeyNotProvided
+from shared.exceptions.auth import InvalidTokenException, InvalidUserCredentials, PublicKeyNotProvided, UserIsNotActive
 from jose import jwt, JWTError
 
 
 
-class AuthService:
+class TokenService:
     def __init__(self, alghoritms: list, public_key: str = None):
         self.alghoritms = alghoritms
         self.public_key = public_key
@@ -16,9 +16,11 @@ class AuthService:
             payload = jwt.decode(
                 token, self.public_key, algorithms=self.alghoritms # pyright: ignore[reportArgumentType]
             )
-            return payload
         except JWTError:
             raise InvalidTokenException
+        if payload.get("is_active") is False:
+            raise UserIsNotActive
+        return payload
 
     def verify_access_token(self, token: str)  -> Optional[dict]:
         payload = self._verify_token(token)
