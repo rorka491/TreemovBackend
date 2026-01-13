@@ -1,0 +1,39 @@
+services:
+  rabbitmq-server:
+    image: rabbitmq:3-management
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - backend
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: unless-stopped
+    
+  rabbit-init:
+    build:
+      context: ../../
+      dockerfile: services/rabbitmq/Dockerfile
+    networks:
+      - backend
+    depends_on:
+      - rabbitmq-server
+    restart: "no"
+    volumes:
+      - ../../:/app
+
+volumes:
+  rabbitmq_data:
+
+networks:
+  backend:
+    external: true
+    name: backend

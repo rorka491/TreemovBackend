@@ -1,0 +1,42 @@
+services:
+  crm_core:
+    build:
+      context: ../../
+      dockerfile: services/crm_core/Dockerfile
+    container_name: crm
+    restart: always
+    env_file: .env
+    ports: 
+      - "8001:8001"
+    environment:
+      DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:5432/${DB_NAME}"
+      PUBLIC_KEY_PATH: /app/keys/public.pem
+    depends_on:
+      - db
+    networks:
+      - app-network
+      - backend
+  db:
+    image: postgres:16
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge
+  backend:
+    external: true
+    name: backend
+
+
+volumes:
+  pgdata:
+

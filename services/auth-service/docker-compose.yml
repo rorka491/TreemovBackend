@@ -1,0 +1,47 @@
+services:
+  auth:
+    build:
+      context: ../../
+      dockerfile: services/auth-service/Dockerfile
+    container_name: auth_service
+    restart: always
+    env_file: .env
+    ports: 
+      - "8000:8000"
+    environment:
+      DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}"
+      REDIS_URL: "redis://${REDIS_HOST_ADRESS}:${REDIS_PORT}/${REDIS_DB}"
+      AUTH_URL: "http://auth-service:8000"
+      PUBLIC_KEY_PATH: /app/keys/public.pem
+      PRIVATE_KEY_PATH: /app/keys/private.pem
+    depends_on:
+      - db
+      - redis
+    networks:
+      - app-network
+      - backend
+  db:
+    image: postgres:16
+    env_file: .env_docker
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+  redis:
+    image: redis:7
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+  backend:
+    external: true
+    name: backend
+
+volumes:
+  pgdata:
