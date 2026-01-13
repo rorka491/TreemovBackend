@@ -13,6 +13,10 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+RED = "\033[31m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+RESET = "\033[0m"
 
 DB_NAME = os.getenv("DB_NAME", 'crm_core')
 DB_USER = os.getenv("DB_USER", 'postgres')

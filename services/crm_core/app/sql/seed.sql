@@ -41,6 +41,7 @@ VALUES
 ON CONFLICT (code) DO NOTHING;
 
 
+
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT
     r.id,

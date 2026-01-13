@@ -1,15 +1,16 @@
+import asyncio
 from fastapi import FastAPI, Request, APIRouter
 from tortoise.contrib.fastapi import register_tortoise
 from app.core.db import TORTOISE_ORM
 # from app.middleware import TenantMiddleware
 from app.api.routers import router
-from app.lifespan import lifespan
+from app.core.config import logger
+from app.consume.tasks import user_created_consumer_task
+
 
 app = FastAPI()
 
 app.include_router(router)
-# app.add_middleware(TenantMiddleware)
-
 
 register_tortoise(
     app,
@@ -18,3 +19,7 @@ register_tortoise(
     add_exception_handlers=True,
 )
 
+@app.on_event("startup")
+async def startup():
+    logger.warning("start user_created_consumer_task")
+    asyncio.create_task(user_created_consumer_task())

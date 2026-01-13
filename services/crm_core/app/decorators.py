@@ -5,7 +5,7 @@ from tortoise.fields.relational import ManyToManyRelation, ForeignKeyRelation
 def handle_relations(func: Callable):
     @wraps(func)
     async def wrapper(self, *args, **kwargs):
-        m2m_data, fk_data, clean_data = await self.extract_relation_fields(**kwargs)
+        m2m_data, fk_data, clean_data = self.extract_relation_fields(**kwargs)
 
         obj = await func(self, *args, **clean_data)
 

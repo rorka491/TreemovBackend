@@ -21,6 +21,10 @@ class TortoiseRepository(AbstractRepository):
             assert "org" in self.model._meta.fields_map, (
                 f"{self.model.__name__} must have org field"
             )
+        elif not self.tenant_aware:
+            assert "org" not in self.model._meta.fields_map, (
+                f"{self.model.__name__} must not have org field"
+            )
         self.m2m_fields: list = self.get_m2m_fields()
         self.fk_fields: list  = self.get_fk_fields()
 
@@ -103,6 +107,9 @@ class TortoiseRepository(AbstractRepository):
                 setattr(obj, f"{field}_id", value)
         await obj.save()
 
+class BaseRepository(TortoiseRepository):
+    tenant_aware = False
+
 class TenantRepository(TortoiseRepository):
     tenant_aware = True
 
@@ -164,19 +171,19 @@ class LessonRepository(TenantRepository):
 class OrganizationMemberRepository(TenantRepository):
     model = OrganizationMember
 
-class OrganizationRepository(TortoiseRepository):
+class OrganizationRepository(BaseRepository):
     model = Organization
 
-class PermissionRepository(TortoiseRepository):
+class PermissionRepository(BaseRepository):
     model = Permission
 
-class RolePermissionRepository(TortoiseRepository):
+class RolePermissionRepository(BaseRepository):
     model = RolePermission
 
-class ProfileRepository(TortoiseRepository):
+class ProfileRepository(BaseRepository):
     model = Profile
 
-class RoleRepository(TortoiseRepository):
+class RoleRepository(BaseRepository):
     model = Role
 
 class AccrualRepository(TenantRepository):
