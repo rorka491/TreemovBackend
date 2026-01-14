@@ -1,13 +1,13 @@
 from tortoise import fields
 from src.models.base import BaseModelPK
-from src.enums import UserRole
+from shared.enums.auth import UserRole
 
 class AbstractUser(BaseModelPK):
     username = fields.CharField(max_length=255, unique=True)
     email = fields.CharField(max_length=255, unique=True, null=True)
     password = fields.CharField(max_length=128)
     role = fields.CharEnumField(enum_type=UserRole, default=UserRole.USER)
-    org_id = fields.IntField(null=True)
+    is_active = fields.BooleanField(default=False)
 
     class Meta:
         abstract = True

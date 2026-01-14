@@ -5,18 +5,21 @@ from src.enums import CodePurpose
 from src.models.email import EmailCode
 from src.core.config import hasher
 from src.email_provider import EmailProvider
-from shared.rabbit.publisher import RabbitPublisher
-from shared import Event, EventFactory
+
+
 from shared.schemas.email import SendCodeSchema
 from shared.schemas.email import VerifyCodeSchema, SendCodeSchema
+from shared.payload import EmailVerifiedPayload
+from shared.enums.queue import QueueEnum
+from libs.rabbit.publisher import RabbitPublisher
 
 
 
 
 class EmailService:
-    def __init__(self, provider: EmailProvider, publisher: RabbitPublisher):
+    def __init__(self, provider: EmailProvider, producer: RabbitPublisher):
         self.provider = provider
-        self.publisher = publisher
+        self.producer = producer
         
     async def create_code(
         self,
@@ -54,6 +57,7 @@ class EmailService:
         except Exception as e:
             raise e
 
+
     async def verify_code(self, payload: VerifyCodeSchema) -> bool:
         try:
             obj = await EmailCode.get(
@@ -72,12 +76,9 @@ class EmailService:
             return False
 
         obj.is_used = True
-
-        event = EventFactory.create(
-            event_type=payload.purpose,
-            payload_obj=payload
-        )
-        await self.publisher.publish(event)
+        payload = EmailVerifiedPayload(email = payload.email)
+        self.producer.publish(payload=payload, queue=QueueEnum.EMAIL_REGISTER_VERIFIED)
+        self.producer.publish(payload=payload, queue=QueueEnum.EMAIL_LOGIN_VERIFIED)
         await obj.save()
         return True
     

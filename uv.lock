@@ -1386,6 +1386,7 @@ version = "0.2.4"
 source = { editable = "shared" }
 dependencies = [
     { name = "aio-pika" },
+    { name = "faststream" },
     { name = "jose" },
     { name = "kafka-python" },
     { name = "pydantic", extra = ["email"] },
@@ -1394,6 +1395,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "aio-pika", specifier = ">=9.4" },
+    { name = "faststream" },
     { name = "jose" },
     { name = "kafka-python" },
     { name = "pydantic", extras = ["email"] },

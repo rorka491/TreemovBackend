@@ -3,8 +3,6 @@ from tortoise import Model
 from tortoise.queryset import QuerySet, QuerySetSingle
 from abc import ABC, abstractmethod
 from app.models.base import BaseModelPK
-from app.decorators import handle_relations
-
 M = TypeVar('M', bound=Model)
 
 
@@ -17,10 +15,6 @@ class AbstractRepository(ABC):
 
     @abstractmethod
     def get_all(self) -> List[M]:
-        ...
-
-    @abstractmethod
-    async def filter(self, **filters) -> List[M]:
         ...
 
     @abstractmethod

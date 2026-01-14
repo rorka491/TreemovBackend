@@ -11,7 +11,6 @@ from src.enums import UserRole
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
     try:
         await User.get(username=ADMIN_USERNAME)
     except DoesNotExist:
@@ -19,8 +18,8 @@ async def lifespan(app: FastAPI):
             username=ADMIN_USERNAME,
             email=ADMIN_EMAIL,
             password=hasher.hash(ADMIN_PASSWORD),
-            role=UserRole.ADMIN.value
+            role=UserRole.ADMIN.value,
+            is_active=True
         )
         print("Admin created")
-    
     yield  

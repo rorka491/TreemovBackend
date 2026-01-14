@@ -19,9 +19,10 @@ services:
       - redis
     networks:
       - app-network
+      - backend
   db:
     image: postgres:16
-    env_file: .env
+    env_file: .env_docker
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -38,6 +39,9 @@ services:
 networks:
   app-network:
     driver: bridge
+  backend:
+    external: true
+    name: backend
 
 volumes:
   pgdata:

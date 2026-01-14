@@ -1,60 +1,53 @@
 import json
 import aio_pika
-from typing import Type
-from shared.contracts.base import Event, QueueEnum
-from shared.contracts.maping import EVENT_PAYLOAD_MAP
+from typing import Callable, Awaitable
+from pydantic import BaseModel
+from shared.enums.queue import QueueEnum
+from app.core.config import logger
+import asyncio
+
 
 class RabbitConsumer:
-    def __init__(
-        self,
-        url: str,
-        exchange_name: str,
-        queue_name: str,
-        binding_keys: list[str],
-    ):
+    def __init__(self, url: str, queue: QueueEnum):
         self.url = url
-        self.exchange_name = exchange_name
-        self.queue_name = queue_name
-        self.binding_keys = binding_keys
+        self.queue_name = queue.value
+        self._connection = None
+        self._channel = None
+        self._queue = None
 
-    async def connect(self):
-        self.connection = await aio_pika.connect_robust(self.url)
-        self.channel = await self.connection.channel()
-
-        self.exchange = await self.channel.declare_exchange(
-            self.exchange_name,
-            aio_pika.ExchangeType.TOPIC,
-            durable=True,
-        )
-
-        self.queue = await self.channel.declare_queue(
+    async def connect(self) -> None:
+        self._connection = await aio_pika.connect_robust(self.url)
+        self._channel = await self._connection.channel()
+        self._queue = await self._channel.declare_queue(
             self.queue_name,
-            durable=True,
+            durable=True
         )
 
-        for key in self.binding_keys:
-            await self.queue.bind(self.exchange, routing_key=key)
+    # async def consume(self, callback: Callable[[BaseModel], None], model: type[BaseModel]):
+    #     """
+    #     callback: функция, которая принимает объект model
+    #     model: Pydantic модель, в которую десериализуем сообщение
+    #     """
+    #     async with self._connection:
+    #         async with self._queue.iterator() as queue_iter:
+    #             async for message in queue_iter:
+    #                 async with message.process():
+    #                     data = message.body.decode()
+    #                     obj = model.model_validate(data)
+    #                     await callback(obj)
 
-    async def handle_message(self, message: aio_pika.IncomingMessage):
-        async with message.process():
-            data = json.loads(message.body.decode())
-
-            event_type = QueueEnum(data["event"])
-            payload_cls: Type = EVENT_PAYLOAD_MAP[event_type]
-            payload = payload_cls.model_validate(data["payload"])
-
-            event = Event(
-                event=event_type,
-                payload=payload,
-                occurred_at=data["occurred_at"],
-                version=data["version"],
-            )
-
-            print("Received event:", event)
-
-    async def start(self):
-        await self.queue.consume(self.handle_message)
-        print(f"Listening on queue: {self.queue_name}")
-
-
-
+    async def consume(self, callback: Callable[[BaseModel], Awaitable[None]], model: type[BaseModel]):
+        async with self._connection:
+            async with self._queue.iterator() as queue_iter:
+                try:
+                    async for message in queue_iter:
+                        async with message.process():
+                            data = message.body.decode()
+                            try:
+                                obj = model.model_validate_json(data)
+                                await callback(obj)
+                            except Exception as e:
+                                logger.exception("Failed to process message")
+                except asyncio.CancelledError:
+                    logger.info("Consumer loop cancelled")
+                    raise

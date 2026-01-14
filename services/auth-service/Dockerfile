@@ -22,11 +22,10 @@ RUN mkdir -p /app/keys && \
     
 COPY services/auth-service ./services/auth-service
 
-RUN uv sync --frozen
 
 WORKDIR /app/services/auth-service
 
-
+    
 
 CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 

@@ -5,10 +5,10 @@ from src.enums import UserRole
 from src.models.user import User
 from src.services.user import UserService
 from src.services.auth import AuthService
-from src.exceptions.auth import InvalidTokenException
-from src.exceptions.admin import AdminsOnlyException
-from src.core.config import PRIVATE_KEY, ALGORITHM
-from src.services.token import verify_access_token
+from src.core.config import PRIVATE_KEY, ALGORITHM, PUBLIC_KEY
+
+from libs.auth import TokenService
+from shared.exceptions import AdminsOnlyException, InvalidTokenException
 
 def get_user_service():
     return UserService()
@@ -16,14 +16,18 @@ def get_user_service():
 def get_auth_service():
     return AuthService()
 
+def get_token_service():
+    return TokenService(public_key=PUBLIC_KEY, alghoritms=[ALGORITHM])
+
 auth_scheme = HTTPBearer()
 
 
 async def get_current_user_id(
-    credentials: HTTPAuthorizationCredentials = Depends(auth_scheme)
+    credentials: HTTPAuthorizationCredentials = Depends(auth_scheme),
+    token_service: TokenService = Depends(get_token_service)
 ) -> int:
     token = credentials.credentials
-    payload = verify_access_token(token)
+    payload = token_service.verify_access_token(token)
     user_id = payload.get("sub")
     
     if not user_id:

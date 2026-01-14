@@ -5,13 +5,13 @@ from app.models.organization import Organization
 
 router = APIRouter(prefix='/organizations')
 
-@router.post('/init', response_model=OrganizationModelRead)
-async def init_organization_schema(
-    request: Request, 
-    org_data: OrganizationModelCreate, 
-    _=Depends(agent_required)
-):
+# @router.post('/init', response_model=OrganizationModelRead)
+# async def init_organization_schema(
+#     request: Request, 
+#     org_data: OrganizationModelCreate, 
+#     _=Depends(agent_required)
+# ):
     
-    return OrganizationModelRead.model_validate(org)
+#     return OrganizationModelRead.model_validate(org)
 
 

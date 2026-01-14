@@ -1,3 +1,4 @@
+from typing import Mapping
 from enum import Enum
 
 
@@ -7,11 +8,9 @@ class CodePurpose(str, Enum):
     reset_password = "reset_password"
 
 
+PurposeQueueMapping: Mapping
+
+
 class DeliveryChannel(str, Enum):
     email = "email"
     sms = "sms"
-
-
-class EventType(str, Enum):
-    EMAIL_CODE_SENT = "email.code.sent"
-    EMAIL_VERIFIED = "email.verified"
