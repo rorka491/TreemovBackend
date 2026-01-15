@@ -92,7 +92,3 @@ class Lesson(AbstractLesson):
     def _set_time_duration(self):
         if self.start_time and self.end_time:
             self.duration = time_diff(self.start_time, self.end_time)
-
-    async def save(self):
-        self._set_week_day()
-        self._set_time_duration()

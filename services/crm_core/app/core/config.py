@@ -3,7 +3,6 @@ import logging
 from dotenv import load_dotenv
 from passlib.context import CryptContext
 from pathlib import Path
-from libs.auth import AuthService
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
@@ -25,6 +24,4 @@ DB_HOST = os.getenv("DB_HOST", 'localhost')
 ALGHORITM = os.getenv('ALGHORITM')
 SECRET_AGENT_KEY = os.getenv("SECRET_AGENT_KEY", "1234")
 RABBIT_URL = os.getenv("RABBIT_URL", "amqp://guest:guest@localhost/")
-
-auth_service = AuthService(alghoritms=[ALGHORITM])
 

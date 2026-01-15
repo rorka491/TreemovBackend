@@ -5,12 +5,8 @@ from abc import ABC, abstractmethod
 from app.models.base import BaseModelPK
 from app.decorators import handle_relations
 from app.repositories.base import AbstractRepository, M
+from tortoise.expressions import Q
 
-<<<<<<< HEAD
-
-=======
-from app.models import *
->>>>>>> 31d6309f9dc7471a27be91ecd2a086b15c322ca1
 
 from app.models import *
 
@@ -167,12 +163,57 @@ class ClassroomRepository(TenantRepository):
 
 class SubjectRepository(TenantRepository):
     model = Subject
+    
+    
+class CollisionValidatorMixin:
+    async def _validate_collision(self, model_cls ,exclude_id: int = None,**kwargs):
+        qs = model_cls.filter(
+            date = kwargs["date"],
+            start_time__lt = kwargs["end_time"],
+            end_time__gt = kwargs["start_time"]
+        ).filter(
+            (Q(classroom=kwargs["classroom"]) | Q(teacher=kwargs["teacher"]) | Q(student_group=kwargs["student_group"]) )
+        )
+        
+        if exclude_id:
+            qs = qs.exclude(id=exclude_id)
+        
+        if await qs.exists():
+            raise ValueError("Сollision was found")
 
 class PeriodLessonRepository(TenantRepository):
     model = PeriodLesson
+    
+    async def create(self, **kwargs) -> PeriodLesson:
+        await  self._validate_collision(self.model,**kwargs)
+        return await super().create(**kwargs)
+             
+    async def update(self, obj: PeriodLesson ,**kwargs) -> PeriodLesson:
+        await  self._validate_collision(self.model,exclude_id=obj.id ,**kwargs)
+        return await super().update(self, obj, **kwargs)
 
-class LessonRepository(TenantRepository):
+
+class LessonRepository(TenantRepository, CollisionValidatorMixin):
     model = Lesson
+    
+    async def create(self, **kwargs) -> Lesson:
+        await  self._validate_collision(self.model,**kwargs)
+        return await self.model.create(**kwargs)
+             
+    async def update(self, obj: Lesson ,**kwargs) -> Lesson:
+        await  self._validate_collision(self.model,exclude_id=obj.id ,**kwargs)
+        return await super().update(self, obj, **kwargs)
+    
+    async def bulk_create(self, lessons: list[dict]) -> list[Lesson]:
+        for lesson in lessons.items():
+            await self._validate_collision(self.model, **lesson)
+            await self.model.create(**lesson)
+    
+    async def bulk_update(self,objs: list[dict], lessons: list[dict]) -> list[Lesson]:
+        for i in range(len(lessons)) :
+            await self._validate_collision(self.model, objs[i],**lessons[i])
+            await super().update(self, objs[i], **lessons[i])
+
 
 class OrganizationMemberRepository(TenantRepository):
     model = OrganizationMember
@@ -200,4 +241,11 @@ class StudentRepository(TenantRepository):
 
 class StudentGroupMemberRepository(TenantRepository):
     model = StudentGroupMember
+
+
+
+
+from app.repositories.tortoise import LessonRepository, PeriodLessonRepository
+
+
 
