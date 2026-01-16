@@ -1,17 +1,19 @@
 import random
 from datetime import datetime, timedelta, UTC
 from tortoise.exceptions import DoesNotExist
-from src.enums import CodePurpose
+
 from src.models.email import EmailCode
 from src.core.config import hasher
 from src.email_provider import EmailProvider
 
 
-from shared.schemas.email import SendCodeSchema
 from shared.schemas.email import VerifyCodeSchema, SendCodeSchema
 from shared.payload import EmailVerifiedPayload
 from shared.enums.queue import QueueEnum
+from shared.enums.email import EmailCodePurpose, PurposeQueueMapping
+from shared.exceptions.queue import QueueNotFound
 from libs.rabbit.publisher import RabbitPublisher
+
 
 
 
@@ -24,7 +26,7 @@ class EmailService:
     async def create_code(
         self,
         email: str,
-        purpose: CodePurpose,
+        purpose: EmailCodePurpose,
         code: str
     ) -> EmailCode:
         await EmailCode.filter(
@@ -59,27 +61,33 @@ class EmailService:
 
 
     async def verify_code(self, payload: VerifyCodeSchema) -> bool:
-        try:
-            obj = await EmailCode.get(
-                email=payload.email, 
-                purpose=payload.purpose,
-                is_used=False
-            )
-
-        except DoesNotExist:
-            return False
-
-        if obj.is_expired:
+        obj = await EmailCode.get_or_none(
+            email=payload.email, 
+            purpose=payload.purpose,
+            is_used=False
+        )
+        if not obj or obj.is_expired:
             return False
         
-        if not hasher.verify(obj.code, payload.code):
+        if not hasher.verify(payload.code, obj.code):
             return False
 
         obj.is_used = True
-        payload = EmailVerifiedPayload(email = payload.email)
-        self.producer.publish(payload=payload, queue=QueueEnum.EMAIL_REGISTER_VERIFIED)
-        self.producer.publish(payload=payload, queue=QueueEnum.EMAIL_LOGIN_VERIFIED)
         await obj.save()
+
+        purpose = payload.purpose
+        payload = EmailVerifiedPayload(
+            email=payload.email,
+            purpose=purpose.value
+        )
+        try:
+            await self.producer.publish(
+                payload=payload, 
+                queue=PurposeQueueMapping[purpose]
+            )
+        except KeyError:
+            raise QueueNotFound
+        
         return True
     
 

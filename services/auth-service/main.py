@@ -1,10 +1,10 @@
+import asyncio
 from fastapi import FastAPI
 from tortoise.contrib.fastapi import register_tortoise
 from fastapi.middleware.cors import CORSMiddleware
 from src.api.router import router
 from src.core.db import TORTOISE_ORM
 from src.core.lifespan import lifespan
-
 
 
 app = FastAPI(lifespan=lifespan)
@@ -21,6 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 register_tortoise(
     app,
     config=TORTOISE_ORM,
@@ -28,3 +29,11 @@ register_tortoise(
 )
 
 app.include_router(router)
+
+# @app.on_event("startup")
+# async def startup():
+#     logger.info(f"{GREEN} task_started {RESET}")
+#     asyncio.create_task(email_verifed_register_consumer_task())
+
+
+

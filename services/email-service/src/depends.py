@@ -1,28 +1,30 @@
 from fastapi import Depends
 # from src.services.code import ...
 # from src.services.email import ...
+from src.core.config import EMAIL_HOST, EMAIL_PASSWORD, EMAIL_USERNAME
 from src.email_provider import SMTPEmailProvider, EmailProvider
 from src.services.email import EmailService
-from shared.rabbit.publisher import RabbitPublisher
-from src.core.config import publisher 
+from libs.rabbit.publisher import RabbitPublisher
+from libs.rabbit.rabbit_init import RABBIT_URL, EXCHANGE_NAME
+
 
 
 def get_email_provider() -> EmailProvider:
     return SMTPEmailProvider(
-        host="smtp.gmail.com",
+        host=EMAIL_HOST,
         port=587,
-        username="rodion.gorshkov.456@gmail.com",
-        password="aubr ugra owfq aeak",
-        from_email="rodion.gorshkov.456@gmail.com",
+        username=EMAIL_USERNAME,
+        password=EMAIL_PASSWORD,
     )
 
-def get_publisher():
-    return publisher
+
+def get_producer():
+    return RabbitPublisher(exchange_name=EXCHANGE_NAME, url=RABBIT_URL)
 
 
 def get_email_service(
     provider: EmailProvider = Depends(get_email_provider),
-    publisher: RabbitPublisher = Depends(get_publisher)
+    producer: RabbitPublisher = Depends(get_producer)
 ) -> EmailService:
-    return EmailService(provider, publisher)
+    return EmailService(provider=provider, producer=producer)
 

@@ -1,4 +1,4 @@
-from typing import TypeVar, Optional, List, Type
+from typing import TypeVar, Optional, List, Type, Generic
 from tortoise import Model
 from tortoise.queryset import QuerySet, QuerySetSingle
 from abc import ABC, abstractmethod
@@ -64,7 +64,7 @@ class TortoiseRepository(AbstractRepository):
         )
 
 
-    async def get(self, **filters) -> M:
+    async def get(self, **filters) -> M | None:
         return await self.model.get_or_none(**filters)
     
 
@@ -182,6 +182,13 @@ class RolePermissionRepository(BaseRepository):
 
 class ProfileRepository(BaseRepository):
     model = Profile
+
+    async def get_with_roles(self, profile_id: int) -> Profile | None:
+        qs = self.base_qs(id=profile_id).prefetch_related("roles__role")
+        return await qs.first()
+
+# class ProfileRoleRepository(BaseRepository):
+#     model = ProfileRole
 
 class RoleRepository(BaseRepository):
     model = Role

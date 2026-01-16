@@ -15,7 +15,7 @@ class AuthService:
 
     async def authenticate_user(self, data: UserLogin) -> tuple[str, str]:
         user = await self.repo.get_user_by_email(email=data.email)
-        if not user:
+        if not user or not user.is_active:
             raise InvalidUserCredentials
 
         if not self.hasher.verify(data.password, user.password):

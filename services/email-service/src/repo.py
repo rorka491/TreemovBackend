@@ -7,7 +7,7 @@ from tortoise.queryset import QuerySet
 from tortoise.expressions import Q
 from tortoise.fields.relational import ManyToManyRelation, ForeignKeyRelation
 from src.decorators import handle_relations
-from src.models.code import VerificationCode
+
 
 
 M = TypeVar('M', bound=Model)
@@ -122,6 +122,8 @@ class TortoiseRepository(AbstractRepository):
                 setattr(obj, f"{field}_id", value)
         await obj.save()
 
-class VerificationCodeRepository(TortoiseRepository):
-    model = VerificationCode()
+# class VerificationCodeRepository(TortoiseRepository):
+#     model = VerificationCode()
+
+
 

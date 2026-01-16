@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 
 
 
-
+AuthContextMissing = HTTPException(status_code=401, detail="Auth context missing")
 InvalidUserCredentials = HTTPException(status_code=401, detail="Invalid credentials")
 InvalidTokenException = HTTPException(status_code=401, detail="Invalid token")
 TokenBlackListedException = HTTPException(status_code=401, detail="Refresh token is blacklisted")

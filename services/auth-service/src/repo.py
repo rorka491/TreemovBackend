@@ -44,7 +44,9 @@ class TortoiseRepository(AbstractRepository):
         return await self.model.create(**data)
     
     async def update(self, obj: M, **data):
-        return await obj.update_from_dict(data)
+        obj = await obj.update_from_dict(data)
+        obj.save()
+        return obj
 
     async def filter(self, **filters):
         return await self.model.filter(**filters)
@@ -58,10 +60,13 @@ class UserRepository(TortoiseRepository):
         data['password'] = hasher.hash(password)
         return await super().create(**data)
     
-    async def update(self, **data):
-        password = data.get("password")
-        data['password'] = hasher.hash(password)
-        return await super().update(**data)
+    async def update(self, obj, **data):
+        password = data.pop("password", None)
+
+        if password is not None:
+            data["password"] = hasher.hash(password)
+
+        return await super().update(obj, **data)
 
     async def update_password(self, password: str):
         return await self.update(password=password)

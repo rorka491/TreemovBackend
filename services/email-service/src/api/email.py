@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel
-from src.schemas import SendCodeSchema, VerifyCodeSchema
+
 from src.services.email import EmailService
 from src.depends import get_email_service
+
+from shared.schemas.email import SendCodeSchema, VerifyCodeSchema
 
 router = APIRouter(prefix="/email", tags=["email"])
 
@@ -29,9 +31,7 @@ async def verify_email(
     email_service: EmailService = Depends(get_email_service)
 ):
     is_verify = await email_service.verify_code(payload)
-    if is_verify:
-        ...
-    ...
+    return {"is_verify": is_verify}
 
 @router.get(
     "/health",

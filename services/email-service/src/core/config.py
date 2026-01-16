@@ -12,10 +12,13 @@ hasher = argon2.using(
 )
 
 
-
 load_dotenv()
-
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_USER = os.getenv('DB_USER')
 DB_NAME = os.getenv('DB_NAME')
 HOST_ADRESS = os.getenv('HOST_ADRESS')
+
+
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+EMAIL_USERNAME = os.getenv('EMAIL_USERNAME')
+EMAIL_HOST = os.getenv('EMAIL_HOST')

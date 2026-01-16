@@ -1,14 +1,12 @@
 from typing import Mapping
 from enum import Enum
+from shared.enums.queue import QueueEnum
+from shared.enums.email import EmailCodePurpose
 
 
-class CodePurpose(str, Enum):
-    login = "login"
-    verify_email = "verify_email"
-    reset_password = "reset_password"
 
 
-PurposeQueueMapping: Mapping
+
 
 
 class DeliveryChannel(str, Enum):

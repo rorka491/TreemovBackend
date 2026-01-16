@@ -2,12 +2,20 @@ from tortoise import fields
 from app.models.base import BaseModelTenant, BaseModelPK
 
 
+    
+# class ProfileRole(BaseModelPK):
+#     profile = fields.ForeignKeyField('models.Profile', on_delete=fields.CASCADE)
+#     role = fields.ForeignKeyField('models.Role', on_delete=fields.CASCADE)
+
 class Profile(BaseModelPK):
     user_id = fields.IntField(uniquenique=True, null=False)
-    name = fields.CharField(max_length=255)
-    surname = fields.CharField(max_length=255)
-    pathronamic = fields.CharField(max_length=255)
-    
+    name = fields.CharField(max_length=255, null=True)
+    surname = fields.CharField(max_length=255, null=True)
+    pathronamic = fields.CharField(max_length=255, null=True)
+    role = fields.ForeignKeyField('models.Role', on_delete=fields.CASCADE)
+
+    class Meta:
+        table = 'profiles'
 
 
 # class ManagerProfile(BaseModelTenant):

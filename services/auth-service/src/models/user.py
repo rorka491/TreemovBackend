@@ -3,7 +3,7 @@ from src.models.base import BaseModelPK
 from shared.enums.auth import UserRole
 
 class AbstractUser(BaseModelPK):
-    username = fields.CharField(max_length=255, unique=True)
+    username = fields.CharField(max_length=255)
     email = fields.CharField(max_length=255, unique=True, null=True)
     password = fields.CharField(max_length=128)
     role = fields.CharEnumField(enum_type=UserRole, default=UserRole.USER)

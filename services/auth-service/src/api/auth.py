@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Response, Depends, Body
+from fastapi import APIRouter, Request, Response, Depends, Body, Header
 from src.depends import get_user_service, get_auth_service
 from src.services.user import UserService
 from src.services.auth import AuthService
@@ -7,17 +7,20 @@ from shared.schemas.user import UserCreate, UserRead, UserLogin
 from shared.schemas.profile import ProfileCreate
 from shared.schemas.token import TokenResponse, RefreshTokenRequest
 from shared.schemas.register import RegisterRequest
+from shared.enums.profile import ProfileRole
+
+
 
 router = APIRouter(prefix='/auth', tags=["Auth"])
 
 
 @router.post('/register', response_model=UserRead)
 async def register(
-    request: Request, 
-    data: RegisterRequest, 
+    user_data: UserCreate, 
+    x_profile_role: ProfileRole = Header(...),
     user_service: UserService = Depends(get_user_service)
 ):
-    user = await user_service.handle_user_create(profile_data=data.profile, user_data=data.user)
+    user = await user_service.handle_user_create(user_data=user_data, role=x_profile_role)
     return user
 
 

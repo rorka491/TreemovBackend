@@ -1,12 +1,16 @@
+from typing import TypeVar, Generic
 from pydantic import BaseModel
+from tortoise.exceptions import IntegrityError
 from app.repositories.tortoise import TortoiseRepository, TenantRepository
 from app.filters import BaseModelFilter
-from tortoise.exceptions import IntegrityError
+from app.repositories.tortoise import TortoiseRepository
 from shared.exceptions import UniqueFieldRequiredException, ObjectNotFound
 
+R = TypeVar("R", bound="TortoiseRepository")
 
-class BaseService:
-    repo_cls: type[TortoiseRepository] = None
+class BaseService(Generic[R]):
+    repo_cls: type[R]
+    repo: R
 
     def __init__(self):
         self.repo = self.repo_cls()
@@ -43,6 +47,7 @@ class BaseService:
             raise ObjectNotFound
         return obj
     
+
     
     async def get_all(self, query_filters: BaseModelFilter = None) -> list:
         filters = {}
@@ -65,3 +70,24 @@ class BaseServiceTenant(BaseService):
     def __init__(self, org):
         self.repo = self.repo_cls(org)
 
+
+# class LessonService(BaseServiceTenant): #Http exceptions 
+#     repo_cls = LessonRepository 
+
+#     def create(self, obj_schema): #
+
+#         return super().create(obj_schema)
+    
+#     def bulk_create() #Нужна валидация
+#         ...
+    
+# class PeriodLesson(BaseServiceTenant):
+#     def __init__(self, org):
+#         super().__init__(org)
+
+#     repo_cls = PeriodLessonRepository 
+#     lesson_repo_cls = LessonRepository
+
+#     def create(self, obj_schema):
+
+#         return super().create(obj_schema)

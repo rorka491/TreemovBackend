@@ -17,6 +17,9 @@ class RabbitPublisher:
 
 
     async def publish(self, payload: BaseModel, queue: QueueEnum) -> None:
+        if not queue:
+            raise ValueError('queue not provide')
+
         if not hasattr(self, "_exchange"):
             await self.connect()
             

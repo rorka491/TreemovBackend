@@ -14,6 +14,7 @@ class ProfileRead(BaseModel):
     surname: str
     pathronamic: str 
 
-class ProfileCreateInternal(ProfileCreate):
+class ProfileCreateInternal(BaseModel):
     user_id: int
+    role_id: int
 

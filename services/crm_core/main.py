@@ -2,14 +2,11 @@ import asyncio
 from fastapi import FastAPI, Request, APIRouter
 from tortoise.contrib.fastapi import register_tortoise
 from app.core.db import TORTOISE_ORM
-# from app.middleware import TenantMiddleware
 from app.api.routers import router
-from app.consume.tasks import user_created_consumer_task
+from app.lifespan import lifespan 
 
+app = FastAPI(lifespan=lifespan)
 
-app = FastAPI()
-
-app.include_router(router)
 
 register_tortoise(
     app,
@@ -18,7 +15,12 @@ register_tortoise(
     add_exception_handlers=True,
 )
 
-@app.on_event("startup")
-async def startup():
-    asyncio.create_task(user_created_consumer_task())
+app.include_router(router)
+
+# @app.on_event("startup")
+# async def startup():
+#     logger.info(f"{GREEN} task_started {RESET}")
+#     asyncio.create_task(user_created_consumer_task())
+
+
 

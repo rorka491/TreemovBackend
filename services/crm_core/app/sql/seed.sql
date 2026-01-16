@@ -2,7 +2,7 @@ BEGIN;
 
 INSERT INTO roles (code, title)
 VALUES
-    ('administrator', 'Администратор'),
+    ('crm_admin', 'Администратор'),
     ('student', 'Студент'),
     ('teacher', 'Учитель')
 ON CONFLICT (code) DO NOTHING;
@@ -48,7 +48,7 @@ SELECT
     p.id
 FROM roles r
 CROSS JOIN permissions p
-WHERE r.code = 'administrator'
+WHERE r.code = 'crm_admin'
 ON CONFLICT DO NOTHING;
 
 COMMIT;

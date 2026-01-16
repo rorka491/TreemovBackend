@@ -7,9 +7,14 @@ from shared.payload import UserCreatedPayload
 
 
 
-async def user_created_consumer_task():
+
+async def main_consume_tasks():
     await user_created_consume.connect()
-    await user_created_consume.consume(handle_user_created, UserCreatedPayload)
+    task1 = asyncio.create_task(
+        user_created_consume.consume(
+            handle_user_created, 
+            UserCreatedPayload
+        )
+    )
 
-
-
+    await asyncio.gather(task1)

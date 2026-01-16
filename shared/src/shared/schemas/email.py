@@ -1,20 +1,23 @@
 from pydantic import BaseModel, EmailStr, Field
-from shared.enums.email import EmailCodePurpose
 from datetime import datetime, UTC
-from contracts.base import QueueEnum
+from shared.enums.email import EmailCodePurpose
+
 
 
 class SendCodeSchema(BaseModel):
     email: EmailStr
+    purpose: EmailCodePurpose
 
 class VerifyCodeSchema(BaseModel):
     email: EmailStr
     code: str
+    purpose: EmailCodePurpose
 
 
 class CodeOutSchema(BaseModel):
     email: EmailStr
     code: str
+    purpose: EmailCodePurpose
     expires_at: datetime
 
 

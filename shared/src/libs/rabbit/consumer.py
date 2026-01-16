@@ -3,9 +3,12 @@ import aio_pika
 from typing import Callable, Awaitable
 from pydantic import BaseModel
 from shared.enums.queue import QueueEnum
-from app.core.config import logger
 import asyncio
 
+import logging 
+
+
+logger = logging.getLogger("auth-rabbit-logger")
 
 class RabbitConsumer:
     def __init__(self, url: str, queue: QueueEnum):
