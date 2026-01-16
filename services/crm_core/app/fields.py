@@ -19,7 +19,5 @@ class TimeDurationField(fields.IntField):
     def to_python_value(self, value: Any) -> Any:
         if value is None:
             return None
-        if isinstance(value, timedelta):
-            return value 
         return timedelta(seconds=value)
 
