@@ -27,5 +27,5 @@ location = "./migrations"
 src_folder = "."
 
 [tool.uv.sources]
-shared = { workspace = true }
+shared = { workspace = true, editable = true }
 

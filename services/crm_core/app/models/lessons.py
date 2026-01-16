@@ -73,6 +73,12 @@ class Lesson(AbstractLesson):
     is_completed = fields.BooleanField(default=False)
     duration = TimeDurationField()
     comment = fields.CharField(max_length=200, null=True)
+    
+    period_lesson = fields.ForeignKeyField(
+        "models.PeriodLesson",  
+        related_name="lessons", 
+        null=True,
+    )
 
     class Meta:
         table = "lesson"

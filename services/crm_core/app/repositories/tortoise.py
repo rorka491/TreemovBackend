@@ -165,54 +165,99 @@ class SubjectRepository(TenantRepository):
     model = Subject
     
     
-class CollisionValidatorMixin:
-    async def _validate_collision(self, model_cls ,exclude_id: int = None,**kwargs):
-        qs = model_cls.filter(
-            date = kwargs["date"],
-            start_time__lt = kwargs["end_time"],
-            end_time__gt = kwargs["start_time"]
-        ).filter(
-            (Q(classroom=kwargs["classroom"]) | Q(teacher=kwargs["teacher"]) | Q(student_group=kwargs["student_group"]) )
-        )
-        
-        if exclude_id:
-            qs = qs.exclude(id=exclude_id)
-        
-        if await qs.exists():
-            raise ValueError("Сollision was found")
+
 
 class PeriodLessonRepository(TenantRepository):
     model = PeriodLesson
-    
+
+    @staticmethod
+    async def _validate_collision(model_cls, exclude_id: int = None, **kwargs):
+        qs = model_cls.filter(
+            title=kwargs["title"],
+            teacher_id=kwargs["teacher_id"],
+            student_group_id=kwargs["student_group_id"]
+        )
+        if exclude_id:
+            qs = qs.exclude(id=exclude_id)
+        if await qs.exists():
+            raise ValueError("Collision found in PeriodLesson")
+
     async def create(self, **kwargs) -> PeriodLesson:
-        await  self._validate_collision(self.model,**kwargs)
+        await self._validate_collision(self.model, **kwargs)
         return await super().create(**kwargs)
-             
-    async def update(self, obj: PeriodLesson ,**kwargs) -> PeriodLesson:
-        await  self._validate_collision(self.model,exclude_id=obj.id ,**kwargs)
-        return await super().update(self, obj, **kwargs)
+
+    async def update(self, obj: PeriodLesson, **kwargs) -> PeriodLesson:
+        await self._validate_collision(self.model, exclude_id=obj.id, **kwargs)
+        return await super().update(obj, **kwargs)
+    
+    async def delete(self, period_lesson_id: int):
+        period_lesson_obj = await self.model.get(id=period_lesson_id)
+        await super().delete(period_lesson_obj)
 
 
-class LessonRepository(TenantRepository, CollisionValidatorMixin):
+
+class LessonRepository(TenantRepository):
     model = Lesson
-    
+
+    @staticmethod
+    async def _validate_collision(model_cls, exclude_id: int = None, **kwargs):
+        qs = model_cls.filter(
+            date=kwargs["date"],
+            start_time__lt=kwargs["end_time"],
+            end_time__gt=kwargs["start_time"]
+        ).filter(
+            Q(classroom=kwargs["classroom_id"]) |
+            Q(teacher=kwargs["teacher_id"]) |
+            Q(student_group=kwargs["student_group_id"])
+        )
+
+        if exclude_id:
+            qs = qs.exclude(id=exclude_id)
+
+        if await qs.exists():
+            raise ValueError("Collision found in Lesson")
+
     async def create(self, **kwargs) -> Lesson:
-        await  self._validate_collision(self.model,**kwargs)
+        await self._validate_collision(self.model, **kwargs)
         return await self.model.create(**kwargs)
-             
-    async def update(self, obj: Lesson ,**kwargs) -> Lesson:
-        await  self._validate_collision(self.model,exclude_id=obj.id ,**kwargs)
-        return await super().update(self, obj, **kwargs)
+
+    async def update(self, obj: Lesson, **kwargs) -> Lesson:
+        await self._validate_collision(self.model, exclude_id=obj.id, **kwargs)
+        return await super().update(obj, **kwargs)
+
+    async def bulk_create(self, lessons_data: list[dict]) -> list[Lesson]:
+        created = []
+        for data in lessons_data:
+            await self._validate_collision(self.model, **data)
+            created_lesson = await self.model.create(**data)
+            created.append(created_lesson)
+        return created
     
-    async def bulk_create(self, lessons: list[dict]) -> list[Lesson]:
-        for lesson in lessons.items():
-            await self._validate_collision(self.model, **lesson)
-            await self.model.create(**lesson)
+    async def bulk_update(self, lessons_data: list[dict]) -> list[Lesson]:
+        updated = []
+        for data in lessons_data:
+            lesson_id = data.pop("id", None)
+            lesson_obj = await self.model.get(id=lesson_id)
+            await self._validate_collision(self.model, exclude_id=lesson_obj.id, **data)
+
+            if lesson.is_completed or lesson.is_canceled:
+                updated_lesson = await super().update(lesson_obj, **data)
+                updated.append(updated_lesson)
+        return updated
     
-    async def bulk_update(self,objs: list[dict], lessons: list[dict]) -> list[Lesson]:
-        for i in range(len(lessons)) :
-            await self._validate_collision(self.model, objs[i],**lessons[i])
-            await super().update(self, objs[i], **lessons[i])
+    async def bulk_delete(self, period_lesson_id: int):
+        lessons = await self.model.filter(period_lesson_id=period_lesson_id)
+        deleted_count = 0
+        for lesson in lessons:
+            if lesson.is_completed or lesson.is_canceled:
+                continue
+            await lesson.delete()
+            deleted_count += 1
+
+        return deleted_count
+                
+
+
 
 
 class OrganizationMemberRepository(TenantRepository):

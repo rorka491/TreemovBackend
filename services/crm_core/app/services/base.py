@@ -5,6 +5,7 @@ from tortoise.exceptions import IntegrityError
 from shared.exceptions import UniqueFieldRequiredException, ObjectNotFound
 
 
+
 class BaseService:
     repo_cls: type[TortoiseRepository] = None
 
